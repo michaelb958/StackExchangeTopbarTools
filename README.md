@@ -4,13 +4,39 @@ A JavaScript library for doing all sorts of stuff with the new black Stack Excha
 
 ## Getting Started
 
-All methods are contained within the object `StackExchangeTopbarTools`.
+All methods supplied by the library are contained within the object `StackExchangeTopbarTools`.
+
+Plugins can make use of the library by simply using the following code template:
+
+<pre>
+function with_jQuery(f) {
+    var s = document.createElement("script");
+    s.type = "text/javascript";
+    s.textContent = "(" + f.toString() + ")(jQuery)";
+    s.setAttribute('data-with-jquery', '');
+    document.head.appendChild(s);
+};
+
+with_jQuery(function($) {
+  if (typeof StackExchangeTopbarToolsPluginInit === 'undefined')
+    StackExchangeTopbarToolsPluginInit = [];
+  StackExchangeTopbarToolsPluginInit.push(function(<i>tools</i>) {
+    
+    // Your plugin code goes here
+    // You can refer to the library object by the shorthand <i>tools</i>
+    
+  });
+  if (typeof StackExchangeTopbarTools === 'object')
+    StackExchangeTopbarTools.pluginsReady();
+});
+</pre>
 
 ## The links on the RHS
 
 ### Adding links
 
-<pre>StackExchangeTopbarTools.links.append({
+<pre>
+<i>tools</i>.links.append({
   id: <i>link ID (not a DOM ID)</i>,
   text: <i>link text</i>,
   tooltip: <i>text to display on mouseover</i>,
@@ -32,12 +58,14 @@ Use `links.prepend` instead of `links.append` to add the link at the start inste
     * `.on.click` is executed when the link is clicked. If specified, this overrides `.href` on a left-click (think `e.preventDefault()`).
     * `.on.tick` is executed every second. This can be useful, say, for updating a clock.
 
+#### WARNING: Prepending links
+
+`links.prepend` behaves kinda counterintuitively when passed multiple arguments - when all's said and done, the extra links appear in reverse order (that is, the last argument to `links.prepend` becomes the first link on the RHS).
+
 ### Removing links
 
-<pre>StackExchangeTopbarTools.links.remove(<i>link ID</i>);
+<pre>
+<i>tools</i>.links.remove(<i>link ID</i>);
 </pre>
 
 The link ID is the same one that was used as the `.id` option when the link was added.
-
-## Examples
-The library currently automatically sets up a bunch of links to test out functionality. These are a sort of test case; they will be removed as soon as I find somewhere else to put them. The code in question can be found below the hyphens-to-column-80 comment.

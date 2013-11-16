@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name Stack Exchange Topbar Tools
-// @description All sorts of tweaks, options, and widgets for the new black topbar.
+// @description A library to support all sorts of tweaks, options, and widgets for the new black topbar.
 // @namespace michaelb958
 // @author michaelb958
 // @license GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
@@ -38,9 +38,7 @@ with_jQuery(function($) {
     // Credit @SLaks <http://stackoverflow.com/a/3086084/1053021>
     return $.contains(document.documentElement, this[0]);
   };
-});
-
-with_jQuery(function($) {
+  
   StackExchangeTopbarTools = {
     _tick_subscribers: [],
     
@@ -120,7 +118,7 @@ with_jQuery(function($) {
       }, // links._add
       
       remove: function(id) {
-        $('.topbar-menu-links > a').each(function(idx, elem) {
+        $('.topbar-menu-links > a').each(function() {
           // .links._add doesn't allow duplicate IDs; but plan for them anyway, just to be safe
           if ($(this).data('SETT-id') == id) {
             $(this).remove();
@@ -128,6 +126,18 @@ with_jQuery(function($) {
         });
       },
     }, // links
+    
+    pluginsReady: function() {
+      var initFuncs = [];
+      if (arguments.length) {
+        initFuncs = arguments;
+      } else if (typeof StackExchangeTopbarToolsPluginInit !== 'undefined') {
+        initFuncs = StackExchangeTopbarToolsPluginInit;
+      }
+      while (initFuncs.length) {
+        initFuncs.shift()(StackExchangeTopbarTools);
+      }
+    },
   };
   
   setInterval(function() {
@@ -137,59 +147,11 @@ with_jQuery(function($) {
     });
   }, 1000);
   
-  // --------------------------------------------------------------------------
-  
   $('.topbar').css('z-index', 999);
   $('.topbar *.network-items *.topbar-icon').removeAttr('href');
   $('.topbar *.profile-me').css({'margin-right': '5px', 'padding-right': '0'});
   $('.topbar *.topbar-menu-links').css('margin-left', '0');
   $('.topbar *.search-container input[type="text"]:last-child').css('margin-left', '0');
   
-  var meta = /^meta\./.test(location.host);
-  StackExchangeTopbarTools.links.prepend({
-    id: 'chat-link',
-    text: 'chat',
-    href: 'http://chat.' + (/stackoverflow\.com$/.test(location.host)
-                            ? location.host : 'stackexchange.com'),
-  }, {
-    id: 'main-meta-link',
-    text: meta ? 'main' : 'meta',
-    href: 'http://' + (meta ? location.hostname.substring(5)
-                            : 'meta.' + location.hostname),
-  });
-  
-  StackExchangeTopbarTools.links.append({
-    id: 'float-topbar-toggle',
-    text: 'float',
-    tooltip: 'attach topbar to top of viewport (click again to undo)',
-    on: {
-      click: function() {
-        StackExchangeTopbarTools.topbar.floating();
-      },
-    },
-  }, {
-    id: 'full-width-toggle',
-    text: 'full width',
-    tooltip: 'widen topbar to full width of viewport (click again to undo)',
-    on: {
-      click: function() {
-        StackExchangeTopbarTools.topbar.fullWidth();
-      },
-    },
-  }, {
-    id: 'clock',
-    text: '88:88:88',
-    tooltip: 'click to do absolutely nothing',
-    on: {
-      tick: function(time) {
-        var zeroPad = function(n) {
-          return (n < 10 ? '0' : '') + n;
-        };
-        var h = zeroPad(time.getUTCHours()),
-            m = zeroPad(time.getUTCMinutes()),
-            s = zeroPad(time.getUTCSeconds());
-        this.elem.text(h + ':' + m + ':' + s);
-      },
-    },
-  });
+  StackExchangeTopbarTools.pluginsReady();
 });
