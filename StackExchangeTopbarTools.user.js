@@ -58,11 +58,15 @@ with_jQuery(function($) {
         if ((typeof toggle === 'undefined' && $('.topbar *.topbar-wrapper').css('width') === '980px')
             || toggle) {
           $('.topbar *.topbar-wrapper').css('width', '100%');
-          $('.topbar *.search-container input[type="text"]:last-child').css('margin-right', '4px');
+          $('.topbar *.search-container *:last-child').css('margin-right', '4px');
         } else {
           $('.topbar *.topbar-wrapper').css('width', '980px');
-          $('.topbar *.search-container input[type="text"]:last-child').css('margin-right', '0');
+          $('.topbar *.search-container *:last-child').css('margin-right', '0');
         }
+      },
+      
+      color: function(color) {
+        $('.topbar').css('background-color', color);
       },
     }, // topbar
     
@@ -151,7 +155,7 @@ with_jQuery(function($) {
   $('.topbar *.network-items *.topbar-icon').removeAttr('href');
   $('.topbar *.profile-me').css({'margin-right': '5px', 'padding-right': '0'});
   $('.topbar *.topbar-menu-links').css('margin-left', '0');
-  $('.topbar *.search-container input[type="text"]:last-child').css('margin-left', '0');
+  $('.topbar *.search-container *:last-child').css('margin-left', '0');
   
   StackExchangeTopbarTools.pluginsReady();
 });

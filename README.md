@@ -31,6 +31,30 @@ with_jQuery(function($) {
 });
 </pre>
 
+## Attributes of the bar itself
+
+### Background color
+
+<pre>
+<i>tools</i>.color(<i>new background color</i>);
+</pre>
+
+Supply a string containing any color accepted by CSS (for example, `'#212121'`).
+
+### Viewport-related stuff
+
+<pre>
+<i>tools</i>.topbar.floating(<i>bool</i>);
+</pre>
+
+True means float at top of viewport, false means don't. If omitted, changes to whatever it isn't doing now.
+
+<pre>
+<i>tools</i>.topbar.fullWidth(<i>bool</i>);
+</pre>
+
+True means expand to full width of viewport, false means stay `980px` wide. If omitted, changes to whatever it isn't doing now.
+
 ## The links on the RHS
 
 ### Adding links
