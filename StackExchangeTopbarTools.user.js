@@ -134,7 +134,7 @@ with_jQuery(function($) {
     pluginsReady: function() {
       var initFuncs = [];
       if (arguments.length) {
-        initFuncs = arguments;
+        initFuncs = initFuncs.slice.call(arguments);
       } else if (typeof StackExchangeTopbarToolsPluginInit !== 'undefined') {
         initFuncs = StackExchangeTopbarToolsPluginInit;
       }
