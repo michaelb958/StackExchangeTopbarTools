@@ -3,7 +3,7 @@
 // @description A library to support all sorts of tweaks, options, and widgets for the new black topbar.
 // @namespace michaelb958
 // @author michaelb958
-// @license GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
+// @license MIT (http://opensource.org/licenses/MIT)
 
 // @include http://meta.stackoverflow.com/*
 

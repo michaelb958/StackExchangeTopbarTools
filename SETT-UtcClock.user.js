@@ -3,7 +3,7 @@
 // @description Never lose track of the official SE time again with this ultra-handy one-second-accuracy topbar clock!
 // @namespace michaelb958
 // @author michaelb958
-// @license GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
+// @license MIT (http://opensource.org/licenses/MIT)
 // @include http://stackoverflow.com/*
 // @include http://serverfault.com/*
 // @include http://superuser.com/*

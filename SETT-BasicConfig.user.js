@@ -3,7 +3,7 @@
 // @description Adds topbar links to toggle full-width and viewport-floating.
 // @namespace michaelb958
 // @author michaelb958
-// @license GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
+// @license MIT (http://opensource.org/licenses/MIT)
 // @include http://stackoverflow.com/*
 // @include http://serverfault.com/*
 // @include http://superuser.com/*
