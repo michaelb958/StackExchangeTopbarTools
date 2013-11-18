@@ -34,7 +34,7 @@ with_jQuery(function($) {
     StackExchangeTopbarToolsPluginInit = [];
   StackExchangeTopbarToolsPluginInit.push(function(tools) {
     
-    StackExchangeTopbarTools.links.append({
+    tools.links.append({
       id: 'clock',
       text: '88:88:88',
       tooltip: 'click to do absolutely nothing',

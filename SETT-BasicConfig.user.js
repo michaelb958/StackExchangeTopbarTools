@@ -34,13 +34,13 @@ with_jQuery(function($) {
     StackExchangeTopbarToolsPluginInit = [];
   StackExchangeTopbarToolsPluginInit.push(function(tools) {
     
-    StackExchangeTopbarTools.links.append({
+    tools.links.append({
       id: 'float-topbar-toggle',
       text: 'float',
       tooltip: 'attach topbar to top of viewport (click again to undo)',
       on: {
         click: function() {
-          StackExchangeTopbarTools.topbar.floating();
+          tools.topbar.floating();
         },
       },
     }, {
@@ -49,7 +49,7 @@ with_jQuery(function($) {
       tooltip: 'widen topbar to full width of viewport (click again to undo)',
       on: {
         click: function() {
-          StackExchangeTopbarTools.topbar.fullWidth();
+          tools.topbar.fullWidth();
         },
       },
     });

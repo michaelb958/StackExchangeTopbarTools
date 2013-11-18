@@ -35,7 +35,7 @@ with_jQuery(function($) {
   StackExchangeTopbarToolsPluginInit.push(function(tools) {
     
     var meta = /^meta\./.test(location.host);
-    StackExchangeTopbarTools.links.prepend({
+    tools.links.prepend({
       id: 'chat-link',
       text: 'chat',
       href: 'http://chat.' + (/stackoverflow\.com$/.test(location.host)
