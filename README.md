@@ -39,7 +39,7 @@ with_jQuery(function($) {
 <i>tools</i>.color(<i>new background color</i>);
 </pre>
 
-Supply a string containing any color accepted by CSS (for example, `'#212121'`).
+Supply a string containing any color accepted by CSS (for example, `'#824D07'`).
 
 ### Viewport-related stuff
 
