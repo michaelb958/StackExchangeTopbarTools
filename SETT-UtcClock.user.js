@@ -34,19 +34,22 @@ with_jQuery(function($) {
     StackExchangeTopbarToolsPluginInit = [];
   StackExchangeTopbarToolsPluginInit.push(function(tools) {
     
+    var getTime = function(time) {
+      var zeroPad = function(n) {
+        return (n < 10 ? '0' : '') + n;
+      };
+      var h = zeroPad(time.getUTCHours()),
+          m = zeroPad(time.getUTCMinutes()),
+          s = zeroPad(time.getUTCSeconds());
+      return h + ':' + m + ':' + s;
+    };
     tools.links.append({
       id: 'clock',
-      text: '88:88:88',
+      text: getTime(new Date()),
       tooltip: 'click to do absolutely nothing',
       on: {
         tick: function(time) {
-          var zeroPad = function(n) {
-            return (n < 10 ? '0' : '') + n;
-          };
-          var h = zeroPad(time.getUTCHours()),
-              m = zeroPad(time.getUTCMinutes()),
-              s = zeroPad(time.getUTCSeconds());
-          this.elem.text(h + ':' + m + ':' + s);
+          this.elem.text(getTime(time));
         },
       },
     });

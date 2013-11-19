@@ -145,9 +145,12 @@ with_jQuery(function($) {
   };
   
   setInterval(function() {
+    var t = new Date().getTime();
     $.each(StackExchangeTopbarTools._tick_subscribers, function() {
-      if (this.interval === 'short' && this.elem.isAttached())
-        this.func.call(this, new Date());
+      if (!(this.elem.isAttached())) return true; // link not attached to DOM; do nothing
+      
+      if (this.interval === 'short')
+        this.func.call($.extend({}, this), new Date(t));
     });
   }, 1000);
   
