@@ -93,3 +93,11 @@ Use `links.prepend` instead of `links.append` to add the link at the start inste
 </pre>
 
 The link ID is the same one that was used as the `.id` option when the link was added.
+
+### Changing link color globally
+
+<pre>
+<i>tools</i>.links.color(<i>new foreground color</i>);
+</pre>
+
+Supply a string containing any color accepted by CSS (for example, `'#26D8D8'`).

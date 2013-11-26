@@ -71,6 +71,10 @@ with_jQuery(function($) {
     }, // topbar
     
     links: {
+      _defaults: {
+        color: false,
+      },
+      
       append: function() {
         StackExchangeTopbarTools.links._add.apply({prepend: false}, arguments);
       },
@@ -86,12 +90,12 @@ with_jQuery(function($) {
           
           if (data.id) {
             $('.topbar-menu-links > a').each(function() {
-              if ($(this).data('SETT-id') == data.id) {
+              if ($(this).attr('data-sett-id') == data.id) {
                 throw 'StackExchangeTopbarTools.links._add: there already exists a link with ID ' + data.id;
               }
             });
-            elem.data('SETT-id', data.id);
-          }
+            elem.attr('data-sett-id', data.id);
+          } else elem.attr('data-sett-id', '');
           
           if (!(data.href || (data.on && data.on.click))) {
             elem.on('click', false);
@@ -117,17 +121,26 @@ with_jQuery(function($) {
             }
           }
           
+          if (StackExchangeTopbarTools.links._defaults.color) {
+            elem.css('color', StackExchangeTopbarTools.links._defaults.color);
+          }
+          
           elem[_.prepend ? 'prependTo' : 'appendTo']('.topbar-menu-links');
         }); // $.each(arguments, ...)
       }, // links._add
       
       remove: function(id) {
-        $('.topbar-menu-links > a').each(function() {
+        $('.topbar-menu-links > a[data-sett-id]').each(function() {
           // .links._add doesn't allow duplicate IDs; but plan for them anyway, just to be safe
-          if ($(this).data('SETT-id') == id) {
+          if ($(this).attr('data-sett-id') == id) {
             $(this).remove();
           }
         });
+      },
+      
+      color: function(color) {
+        $('.topbar-menu-links a, .topbar-flair span').css('color', color);
+        StackExchangeTopbarTools.links._defaults.color = color;
       },
     }, // links
     
