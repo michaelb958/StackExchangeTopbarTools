@@ -4,26 +4,24 @@
 // @namespace michaelb958
 // @author michaelb958
 // @license MIT (http://opensource.org/licenses/MIT)
-
-// @include http://meta.stackoverflow.com/*
-
-// @exclude http://chat.*/*
-// ==/UserScript==
-
 // @include http://stackoverflow.com/*
 // @include http://serverfault.com/*
 // @include http://superuser.com/*
-
+// @include http://meta.stackoverflow.com/*
 // @include http://meta.serverfault.com/*
 // @include http://meta.superuser.com/*
 // @include http://stackapps.com/*
 // @include http://*.stackexchange.com/*
-// @include http://stackexchange.com/*
+
 // @include http://askubuntu.com/*
 // @include http://meta.askubuntu.com/*
 // @include http://mathoverflow.net/*
 // @include http://meta.mathoverflow.net/*
 // @include http://discuss.area51.stackexchange.com/*
+// @exclude http://chat.*/*
+// ==/UserScript==
+
+// @include http://stackexchange.com/*
 
 function with_jQuery(f) {
     var s = document.createElement("script");
