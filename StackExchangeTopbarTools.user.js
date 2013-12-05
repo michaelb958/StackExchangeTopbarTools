@@ -159,13 +159,12 @@ with_jQuery(function($) {
     var t = new Date().getTime();
     $.each(StackExchangeTopbarTools._tick_subscribers, function() {
       if (!(this.elem.isAttached())) return true; // link not attached to DOM; do nothing
-      
       if (this.interval === 'short')
         this.func.call($.extend({}, this), new Date(t));
     });
   }, 1000);
   
-  $('.topbar').css('z-index', 999);
+  $('.topbar').css({'z-index': 999, 'top': 0});
   $('.topbar *.network-items *.topbar-icon').removeAttr('href');
   $('.topbar *.profile-me').css({'margin-right': '5px', 'padding-right': '0'});
   $('.topbar *.topbar-menu-links').css('margin-left', '0');
