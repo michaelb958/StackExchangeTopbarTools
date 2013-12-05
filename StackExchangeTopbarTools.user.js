@@ -82,6 +82,7 @@ with_jQuery(function($) {
       _add: function() {
         var _ = this;
         $.each(arguments, function(idx, data) {
+          if (!data) return true;
           var elem = $('<a />');
           if (data.text)    elem.text(data.text);
           if (data.tooltip) elem.attr('title', data.tooltip);

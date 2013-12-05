@@ -40,7 +40,7 @@ with_jQuery(function($) {
       text: 'chat',
       href: 'http://chat.' + (/stackoverflow\.com$/.test(location.host)
                               ? location.host : 'stackexchange.com'),
-    }, {
+    }, location.host === 'stackapps.com' ? null : {
       id: 'main-meta-link',
       text: meta ? 'main' : 'meta',
       href: 'http://' + (meta ? location.hostname.substring(5)
