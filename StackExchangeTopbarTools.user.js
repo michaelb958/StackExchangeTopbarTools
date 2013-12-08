@@ -37,7 +37,7 @@ with_jQuery(function($) {
     return $.contains(document.documentElement, this[0]);
   };
   
-  StackExchangeTopbarTools = {
+  window.StackExchangeTopbarTools = {
     _tick_subscribers: [],
     
     topbar: {
@@ -157,7 +157,8 @@ with_jQuery(function($) {
   };
   
   setInterval(function() {
-    var t = new Date().getTime();
+    // The `* 1000` is to correct for `.getTime()` being in milliseconds and the offset in seconds
+    var t = new Date().getTime() + StackExchange.options.serverTimeOffsetSec * 1000;
     $.each(StackExchangeTopbarTools._tick_subscribers, function() {
       if (!(this.elem.isAttached())) return true; // link not attached to DOM; do nothing
       if (this.interval === 'short')

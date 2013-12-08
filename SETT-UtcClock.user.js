@@ -30,9 +30,9 @@ function with_jQuery(f) {
 };
 
 with_jQuery(function($) {
-  if (typeof StackExchangeTopbarToolsPluginInit === 'undefined')
-    StackExchangeTopbarToolsPluginInit = [];
-  StackExchangeTopbarToolsPluginInit.push(function(tools) {
+  (window.StackExchangeTopbarToolsPluginInit
+   = window.StackExchangeTopbarToolsPluginInit
+   || []).push(function(tools) {
     
     var getTime = function(time) {
       var zeroPad = function(n) {
@@ -48,8 +48,8 @@ with_jQuery(function($) {
       text: getTime(new Date()),
       tooltip: 'click to do absolutely nothing',
       on: {
-        tick: function(time) {
-          this.elem.text(getTime(time));
+        tick: function(serverTime) {
+          this.elem.text(getTime(serverTime));
         },
       },
     });

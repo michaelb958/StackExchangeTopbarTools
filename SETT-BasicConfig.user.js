@@ -30,9 +30,9 @@ function with_jQuery(f) {
 };
 
 with_jQuery(function($) {
-  if (typeof StackExchangeTopbarToolsPluginInit === 'undefined')
-    StackExchangeTopbarToolsPluginInit = [];
-  StackExchangeTopbarToolsPluginInit.push(function(tools) {
+  (window.StackExchangeTopbarToolsPluginInit
+   = window.StackExchangeTopbarToolsPluginInit
+   || []).push(function(tools) {
     
     tools.links.append({
       id: 'float-topbar-toggle',
