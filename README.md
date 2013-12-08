@@ -18,9 +18,9 @@ function with_jQuery(f) {
 };
 
 with_jQuery(function($) {
-  if (typeof StackExchangeTopbarToolsPluginInit === 'undefined')
-    StackExchangeTopbarToolsPluginInit = [];
-  StackExchangeTopbarToolsPluginInit.push(function(<i>tools</i>) {
+  (window.StackExchangeTopbarToolsPluginInit
+   = window.StackExchangeTopbarToolsPluginInit
+   || []).push(function(<i>tools</i>) {
     
     // Your plugin code goes here
     // You can refer to the library object by the shorthand <i>tools</i>
@@ -36,7 +36,7 @@ with_jQuery(function($) {
 ### Background color
 
 <pre>
-<i>tools</i>.color(<i>new background color</i>);
+<i>tools</i>.topbar.color(<i>new background color</i>);
 </pre>
 
 Supply a string containing any color accepted by CSS (for example, `'#824D07'`).
@@ -69,7 +69,7 @@ True means expand to full width of viewport, false means stay `980px` wide. If o
     click: <i>code executed on click</i>,
     tick: <i>code executed every second</i>,
   },
-});
+}, ...);
 </pre>
 
 Use `links.prepend` instead of `links.append` to add the link at the start instead of the end.

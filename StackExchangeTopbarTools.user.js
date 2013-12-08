@@ -1,6 +1,7 @@
 // ==UserScript==
 // @name Stack Exchange Topbar Tools
 // @description A library to support all sorts of tweaks, options, and widgets for the new black topbar.
+// @version 0.1
 // @namespace michaelb958
 // @author michaelb958
 // @license MIT (http://opensource.org/licenses/MIT)

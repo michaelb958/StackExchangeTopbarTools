@@ -1,6 +1,7 @@
 // ==UserScript==
 // @name SE Topbar Tools UTC Clock
 // @description Never lose track of the official SE time again with this ultra-handy one-second-accuracy topbar clock!
+// @version 1.0
 // @namespace michaelb958
 // @author michaelb958
 // @license MIT (http://opensource.org/licenses/MIT)
