@@ -19,6 +19,7 @@
 // @include http://mathoverflow.net/*
 // @include http://meta.mathoverflow.net/*
 // @include http://discuss.area51.stackexchange.com/*
+// @exclude http://area51.stackexchange.com/*
 // @exclude http://chat.*/*
 // ==/UserScript==
 
