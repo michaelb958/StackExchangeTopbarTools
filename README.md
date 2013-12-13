@@ -26,8 +26,8 @@ with_jQuery(function($) {
     // You can refer to the library object by the shorthand <i>tools</i>
     
   });
-  if (typeof StackExchangeTopbarTools === 'object')
-    StackExchangeTopbarTools.pluginsReady();
+  if (typeof window.StackExchangeTopbarTools === 'object')
+    window.StackExchangeTopbarTools.pluginsReady();
 });
 </pre>
 

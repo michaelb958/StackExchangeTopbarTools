@@ -37,6 +37,6 @@ with_jQuery(function($) {
     tools.topbar.floating(true);
     
   });
-  if (typeof StackExchangeTopbarTools === 'object')
-    StackExchangeTopbarTools.pluginsReady();
+  if (typeof window.StackExchangeTopbarTools === 'object')
+    window.StackExchangeTopbarTools.pluginsReady();
 });
