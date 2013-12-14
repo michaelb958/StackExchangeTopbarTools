@@ -86,13 +86,33 @@ Use `links.prepend` instead of `links.append` to add the link at the start inste
 
 `links.prepend` behaves kinda counterintuitively when passed multiple arguments - when all's said and done, the extra links appear in reverse order (that is, the last argument to `links.prepend` becomes the first link on the RHS).
 
-### Removing links
+### Modifying links
 
 <pre>
-<i>tools</i>.links.remove(<i>link ID</i>);
+<i>tools</i>.links(<i>link ID</i>).<i>modify</i>(<i>params</i>).<i>[...]</i>;
 </pre>
 
 The link ID is the same one that was used as the `.id` option when the link was added.
+
+#### Change text
+
+<pre>
+<i>tools</i>.links(<i>link ID</i>).text(<i>new text</i>);
+</pre>
+
+#### Pulse colour
+
+<pre>
+<i>tools</i>.links(<i>link ID</i>).pulse(<i>success</i>);
+</pre>
+
+Call this method on your link to indicate the success (pass `true`) or failure (pass `false`) of whatever it was meant to be doing, or just to notify something (no argument). Close to useless on links without any `.on` handlers.
+
+#### Remove
+
+<pre>
+<i>tools</i>.links(<i>link ID</i>).remove();
+</pre>
 
 ### Changing link color globally
 

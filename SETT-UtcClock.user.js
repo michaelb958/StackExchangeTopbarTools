@@ -47,7 +47,7 @@ with_jQuery(function($) {
     tools.links.append({
       id: 'clock',
       text: getTime(new Date()),
-      tooltip: 'click to do absolutely nothing',
+      tooltip: 'SE server time ± 6 to 8 seconds',
       on: {
         tick: function(serverTime) {
           this.elem.text(getTime(serverTime));

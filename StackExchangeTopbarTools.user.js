@@ -64,11 +64,11 @@ with_jQuery(function($) {
   var topbar_floating_data = {
     detect: function() { return $('.topbar').css('position') !== 'fixed'; },
     once: $.extend(function() {
-      $('.topbar').css({'z-index': 999, 'top': 0});
+      $('.topbar').css({zIndex: 999, top: 0});
     }, {
       askubuntu: function() {
-        $('#custom-header').css({'top': '0px', 'width': '100%'});
-        $('.topbar').css({'top': '30px', 'left': '50%', 'margin-left': '-495px'});
+        $('#custom-header').css({top: '0px', width: '100%'});
+        $('.topbar').css({top: '30px', left: '50%', marginLeft: '-495px'});
       },
       tex: function() {
         $('body').css('background-image', 'none');
@@ -108,7 +108,7 @@ with_jQuery(function($) {
     }),
     off: $.extend(function() {
       $('.topbar *.topbar-wrapper').css('width', '980px');
-      $('.topbar *.search-container *:last-child').css('margin-right', '0');
+      $('.topbar *.search-container *:last-child').css('margin-right', 0);
     }, {})
   };
   
@@ -126,21 +126,22 @@ with_jQuery(function($) {
     
     topbar: {
       floating: function(toggle) {
-        tools.topbar._styleToggle.call(topbar_floating_data, toggle);
+        return tools.topbar._styleToggle.call(topbar_floating_data, toggle);
       },
       fullWidth: function(toggle) {
-        tools.topbar._styleToggle.call(topbar_fullWidth_data, toggle);
+        return tools.topbar._styleToggle.call(topbar_fullWidth_data, toggle);
       },
       _styleToggle: function(toggle) {
         var x; // temp var
         if (typeof toggle === 'undefined') toggle = this.detect();
-        if (toggle && (x = this.once)) {
+        if ((x = this.once)) {
           x();
           (x = x[sitename in x ? sitename : '']) ? x() : null;
           this.once = false;
         }
         (x = toggle ? this.on : this.off)();
         (x = x[sitename in x ? sitename : '']) ? x() : null;
+        return true;
       },
       
       color: function(color) {
@@ -148,9 +149,35 @@ with_jQuery(function($) {
       },
     }, // topbar
     
-    links: {
+    links: $.extend(function(id) {
+      var link = $('.topbar-menu-links > a[data-sett-id]').filter(function() {
+        // .links._add doesn't allow duplicate IDs; but plan for them anyway, just to be safe
+        return $(this).attr('data-sett-id') == id;
+      });
+      var obj = {
+        text: function(text) { link.text(text); return obj; },
+        remove: function()   { link.remove();   return obj; },
+        pulse: function(success) {
+          var color = success ? 'green' : 'red';
+          if (typeof success === 'undefined') color = 'blue';
+          link.css('transition' ,'background-color 150ms linear').css('background-color', color);
+          setTimeout(function() {
+            link.css('background-color', '');
+          }, 150);
+          return obj;
+        }
+      };
+      return obj;
+    }, { // links
       _defaults: {
         color: false,
+      },
+      _all: function(container) {
+        var x = $('.topbar-menu-links');
+        return container ? x : x.find('a');
+      },
+      _All: function() {
+        return tools.links._all().add('.topbar-flair span');
       },
       
       append: function() {
@@ -168,11 +195,11 @@ with_jQuery(function($) {
           if (data.tooltip) elem.attr('title', data.tooltip);
           
           if (data.id) {
-            $('.topbar-menu-links > a').each(function() {
-              if ($(this).attr('data-sett-id') == data.id) {
-                throw 'StackExchangeTopbarTools.links._add: there already exists a link with ID ' + data.id;
-              }
-            });
+            if (tools.links._all().filter(function() {
+                  return $(this).attr('data-sett-id') == data.id;
+                }).length > 0) {
+              throw 'StackExchangeTopbarTools.links._add: there already exists a link with ID ' + data.id + '; you may not add another';
+            }
             elem.attr('data-sett-id', data.id);
           } else elem.attr('data-sett-id', '');
           
@@ -185,7 +212,7 @@ with_jQuery(function($) {
             if (data.on && data.on.click) {
               elem.on('click', function(e) {
                 e.preventDefault();
-                data.on.click.call(elem, e);
+                data.on.click.call({elem: elem}, e);
               });
             }
           }
@@ -204,24 +231,15 @@ with_jQuery(function($) {
             elem.css('color', tools.links._defaults.color);
           }
           
-          elem[_.prepend ? 'prependTo' : 'appendTo']('.topbar-menu-links');
+          elem[_.prepend ? 'prependTo' : 'appendTo'](tools.links._all(true));
         }); // $.each(arguments, ...)
       }, // links._add
       
-      remove: function(id) {
-        $('.topbar-menu-links > a[data-sett-id]').each(function() {
-          // .links._add doesn't allow duplicate IDs; but plan for them anyway, just to be safe
-          if ($(this).attr('data-sett-id') == id) {
-            $(this).remove();
-          }
-        });
-      },
-      
       color: function(color) {
-        $('.topbar-menu-links a, .topbar-flair span').css('color', color);
+        tools.links._All.css('color', color);
         tools.links._defaults.color = color;
       },
-    }, // links
+    }), // links
     
     pluginsReady: function() {
       var initFuncs = [];
@@ -236,6 +254,7 @@ with_jQuery(function($) {
     },
   };
   
+  // Set up ticks
   setInterval(function() {
     // The `* 1000` is to correct for `.getTime()` being in milliseconds and the offset in seconds
     var t = new Date().getTime() + StackExchange.options.serverTimeOffsetSec * 1000;
@@ -247,7 +266,7 @@ with_jQuery(function($) {
   }, 1000);
   
   $('.topbar *.network-items *.topbar-icon').removeAttr('href');
-  $('.topbar *.profile-me').css({'margin-right': '5px', 'padding-right': '0'});
+  $('.topbar *.profile-me').css({marginRight: '5px', paddingRight: '0'});
   $('.topbar *.topbar-menu-links').css('margin-left', '0');
   $('.topbar *.search-container *:last-child').css('margin-left', '0');
   
