@@ -7,7 +7,7 @@
 // @include http://stackoverflow.com/*
 // @include http://serverfault.com/*
 // @include http://superuser.com/*
-// @include http://meta.stackoverflow.com/*
+// @include http://*.stackoverflow.com/*
 // @include http://meta.serverfault.com/*
 // @include http://meta.superuser.com/*
 // @include http://stackapps.com/*
