@@ -81,6 +81,7 @@ Use `links.prepend` instead of `links.append` to add the link at the start inste
 * `.on` contains event-handling functions:
     * `.on.click` is executed when the link is clicked. If specified, this overrides `.href` on a left-click (think `e.preventDefault()`).
     * `.on.tick` is executed every second. This can be useful, say, for updating a clock.
+    * `.on.floating` and `.on.fullWidth` are executed when the corresponding <code><i>tools</i>.topbar</code> methods are called.
 
 #### WARNING: Prepending links
 
@@ -89,7 +90,7 @@ Use `links.prepend` instead of `links.append` to add the link at the start inste
 ### Modifying links
 
 <pre>
-<i>tools</i>.links(<i>link ID</i>).<i>modify</i>(<i>params</i>).<i>[...]</i>;
+<i>tools</i>.links(<i>link ID</i>).<i>modify</i>(<i>...</i>)<i>.[...]</i>;
 </pre>
 
 The link ID is the same one that was used as the `.id` option when the link was added.

@@ -81,7 +81,7 @@ with_jQuery(function($) {
       askubuntu: function() {
         $('#custom-header').css('position', 'fixed');
         $('.topbar').css('margin-left', '-495px');
-        $('.container').css(spacingAttr, '62px');
+        $('.container').css(spacingAttr, '64px');
       },
     }),
     off: $.extend(function() {
@@ -104,6 +104,7 @@ with_jQuery(function($) {
       askubuntu: function() {
         // Not supported for aesthetic reasons
         tools.topbar.fullWidth(false);
+        throw {sett: {abortStyleToggle: true}};
       },
     }),
     off: $.extend(function() {
@@ -120,28 +121,50 @@ with_jQuery(function($) {
   };
   
   window.StackExchangeTopbarTools = {
-    _tick_subscribers: [],
+    _subscribers: {
+      tick: {
+        _short: []
+      },
+      floating: [],
+      fullWidth: []
+    },
     
     sitename: sitename,
     
     topbar: {
       floating: function(toggle) {
-        return tools.topbar._styleToggle.call(topbar_floating_data, toggle);
+        var success = tools.topbar._styleToggle.call(topbar_floating_data, toggle);
+        $.each(tools._subscribers.floating, function() {
+          if (!(this.elem.isAttached())) return true; // element not attached to DOM; do nothing
+          this.func.call({elem: this.elem, object: this.elem.data('sett-modify-methods')}, success);
+        });
+        return success;
       },
       fullWidth: function(toggle) {
-        return tools.topbar._styleToggle.call(topbar_fullWidth_data, toggle);
+        var success = tools.topbar._styleToggle.call(topbar_fullWidth_data, toggle);
+        $.each(tools._subscribers.fullWidth, function() {
+          if (!(this.elem.isAttached())) return true; // element not attached to DOM; do nothing
+          this.func.call({elem: this.elem, object: this.elem.data('sett-modify-methods')}, success);
+        });
+        return success;
       },
       _styleToggle: function(toggle) {
         var x; // temp var
         if (typeof toggle === 'undefined') toggle = this.detect();
-        if ((x = this.once)) {
-          x();
+        try {
+          if ((x = this.once)) {
+            x();
+            (x = x[sitename in x ? sitename : '']) ? x() : null;
+            this.once = false;
+          }
+          (x = toggle ? this.on : this.off)();
           (x = x[sitename in x ? sitename : '']) ? x() : null;
-          this.once = false;
+          return true;
+        } catch (e) {
+          if (e.sett && e.sett.abortStyleToggle) {
+            return false;
+          } else throw e;
         }
-        (x = toggle ? this.on : this.off)();
-        (x = x[sitename in x ? sitename : '']) ? x() : null;
-        return true;
       },
       
       color: function(color) {
@@ -151,23 +174,10 @@ with_jQuery(function($) {
     
     links: $.extend(function(id) {
       var link = $('.topbar-menu-links > a[data-sett-id]').filter(function() {
-        // .links._add doesn't allow duplicate IDs; but plan for them anyway, just to be safe
         return $(this).attr('data-sett-id') == id;
       });
-      var obj = {
-        text: function(text) { link.text(text); return obj; },
-        remove: function()   { link.remove();   return obj; },
-        pulse: function(success) {
-          var color = success ? 'green' : 'red';
-          if (typeof success === 'undefined') color = 'blue';
-          link.css('transition' ,'background-color 150ms linear').css('background-color', color);
-          setTimeout(function() {
-            link.css('background-color', '');
-          }, 150);
-          return obj;
-        }
-      };
-      return obj;
+      if (link.length > 1) throw "StackExchangeTopbarTools.links.call: you somehow have two links with the same ID, go fix it!";
+      return link.data('sett-modify-methods');
     }, { // links
       _defaults: {
         color: false,
@@ -198,7 +208,7 @@ with_jQuery(function($) {
             if (tools.links._all().filter(function() {
                   return $(this).attr('data-sett-id') == data.id;
                 }).length > 0) {
-              throw 'StackExchangeTopbarTools.links._add: there already exists a link with ID ' + data.id + '; you may not add another';
+              throw 'StackExchangeTopbarTools.links._add: there already exists a link with ID ' + data.id + ', you may not add another';
             }
             elem.attr('data-sett-id', data.id);
           } else elem.attr('data-sett-id', '');
@@ -218,11 +228,23 @@ with_jQuery(function($) {
           }
           
           if (data.on) {
-            if (data.on.tick) {
-              tools._tick_subscribers.push({
-                func: data.on.tick,
-                elem: elem,
-                interval: 'short',
+            var on = data.on;
+            if (on.tick) {
+              tools._subscribers.tick._short.push({
+                func: on.tick,
+                elem: elem
+              });
+            }
+            if (on.floating) {
+              tools._subscribers.floating.push({
+                func: on.floating,
+                elem: elem
+              });
+            }
+            if (on.fullWidth) {
+              tools._subscribers.fullWidth.push({
+                func: on.fullWidth,
+                elem: elem
               });
             }
           }
@@ -230,6 +252,20 @@ with_jQuery(function($) {
           if (tools.links._defaults.color) {
             elem.css('color', tools.links._defaults.color);
           }
+          
+          elem.data('sett-modify-methods', {
+            text: function(text) { elem.text(text); return this; },
+            remove: function()   { elem.remove();   return this; },
+            pulse: function(success) {
+              var color = success ? 'green' : 'red';
+              if (typeof success === 'undefined') color = 'blue';
+              elem.css('transition' ,'background-color 150ms linear').css('background-color', color);
+              setTimeout(function() {
+                elem.css('background-color', '');
+              }, 150);
+              return this;
+            }
+          });
           
           elem[_.prepend ? 'prependTo' : 'appendTo'](tools.links._all(true));
         }); // $.each(arguments, ...)
@@ -258,17 +294,19 @@ with_jQuery(function($) {
   setInterval(function() {
     // The `* 1000` is to correct for `.getTime()` being in milliseconds and the offset in seconds
     var t = new Date().getTime() + StackExchange.options.serverTimeOffsetSec * 1000;
-    $.each(tools._tick_subscribers, function() {
-      if (!(this.elem.isAttached())) return true; // link not attached to DOM; do nothing
-      if (this.interval === 'short')
-        this.func.call($.extend({}, this), new Date(t));
+    $.each(tools._subscribers.tick._short, function() {
+      if (!(this.elem.isAttached())) return true; // element not attached to DOM; do nothing
+      this.func.call({elem: this.elem, object: this.elem.data('sett-modify-methods')}, new Date(t));
     });
   }, 1000);
   
   $('.topbar *.network-items *.topbar-icon').removeAttr('href');
-  $('.topbar *.profile-me').css({marginRight: '5px', paddingRight: '0'});
-  $('.topbar *.topbar-menu-links').css('margin-left', '0');
-  $('.topbar *.search-container *:last-child').css('margin-left', '0');
+  $('.topbar *.profile-me').css({marginRight: '5px', paddingRight: 0});
+  $('.topbar *.topbar-menu-links').css('margin-left', 0);
+  $('.topbar *.search-container *:last-child').css('margin-left', 0);
+  if (sitename === 'askubuntu') {
+    $('#custom-header').css('margin-bottom', 0);
+  }
   
   (tools = window.StackExchangeTopbarTools).pluginsReady();
 });

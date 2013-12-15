@@ -42,7 +42,10 @@ with_jQuery(function($) {
         click: function() {
           tools.topbar.floating();
         },
-      },
+        floating: function(success) {
+          this.object.pulse(success);
+        }
+      }
     }, {
       id: 'full-width-toggle',
       text: 'full width',
@@ -51,7 +54,10 @@ with_jQuery(function($) {
         click: function() {
           tools.topbar.fullWidth();
         },
-      },
+        fullWidth: function(success) {
+          this.object.pulse(success);
+        }
+      }
     });
     
   });
