@@ -22,25 +22,25 @@
 // ==/UserScript==
 
 function with_jQuery(f) {
-    var s = document.createElement("script");
-    s.type = "text/javascript";
-    s.textContent = "(" + f.toString() + ")(jQuery)";
-    s.setAttribute('data-with-jquery', '');
-    document.head.appendChild(s);
+  var s = document.createElement("script");
+  s.type = "text/javascript";
+  s.textContent = "(" + f.toString() + ")(jQuery)";
+  s.setAttribute('data-with-jquery', '');
+  document.head.appendChild(s);
 };
 
 with_jQuery(function($) {
   (window.StackExchangeTopbarToolsPluginInit
    = window.StackExchangeTopbarToolsPluginInit
-   || []).push(function(tools) {
+   || []).push(function(SETT) {
     
-    tools.links.append({
+    SETT.links.append({
       id: 'float-topbar-toggle',
       text: 'float',
       tooltip: 'attach topbar to top of viewport (click again to undo)',
       on: {
         click: function() {
-          tools.topbar.floating();
+          SETT.topbar.floating();
         },
         floating: function(success) {
           this.object.pulse(success);
@@ -52,7 +52,7 @@ with_jQuery(function($) {
       tooltip: 'widen topbar to full width of viewport (click again to undo)',
       on: {
         click: function() {
-          tools.topbar.fullWidth();
+          SETT.topbar.fullWidth();
         },
         fullWidth: function(success) {
           this.object.pulse(success);

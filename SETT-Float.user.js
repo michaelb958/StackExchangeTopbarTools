@@ -22,19 +22,19 @@
 // ==/UserScript==
 
 function with_jQuery(f) {
-    var s = document.createElement("script");
-    s.type = "text/javascript";
-    s.textContent = "(" + f.toString() + ")(jQuery)";
-    s.setAttribute('data-with-jquery', '');
-    document.head.appendChild(s);
+  var s = document.createElement("script");
+  s.type = "text/javascript";
+  s.textContent = "(" + f.toString() + ")(jQuery)";
+  s.setAttribute('data-with-jquery', '');
+  document.head.appendChild(s);
 };
 
 with_jQuery(function($) {
   (window.StackExchangeTopbarToolsPluginInit
    = window.StackExchangeTopbarToolsPluginInit
-   || []).push(function(tools) {
+   || []).push(function(SETT) {
     
-    tools.topbar.floating(true);
+    SETT.topbar.floating(true);
     
   });
   if (typeof window.StackExchangeTopbarTools === 'object')

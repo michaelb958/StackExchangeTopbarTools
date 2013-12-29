@@ -23,17 +23,17 @@
 // ==/UserScript==
 
 function with_jQuery(f) {
-    var s = document.createElement("script");
-    s.type = "text/javascript";
-    s.textContent = "(" + f.toString() + ")(jQuery)";
-    s.setAttribute('data-with-jquery', '');
-    document.head.appendChild(s);
+  var s = document.createElement("script");
+  s.type = "text/javascript";
+  s.textContent = "(" + f.toString() + ")(jQuery)";
+  s.setAttribute('data-with-jquery', '');
+  document.head.appendChild(s);
 };
 
 with_jQuery(function($) {
   (window.StackExchangeTopbarToolsPluginInit
    = window.StackExchangeTopbarToolsPluginInit
-   || []).push(function(tools) {
+   || []).push(function(SETT) {
     
     var getTime = function(time) {
       var zeroPad = function(n) {
@@ -44,7 +44,7 @@ with_jQuery(function($) {
           s = zeroPad(time.getUTCSeconds());
       return h + ':' + m + ':' + s;
     };
-    tools.links.append({
+    SETT.links.append({
       id: 'clock',
       text: getTime(new Date()),
       tooltip: 'SE server time ± 6 to 8 seconds',
