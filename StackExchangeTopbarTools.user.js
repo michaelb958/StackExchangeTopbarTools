@@ -34,7 +34,7 @@ function with_jQuery(f) {
 };
 
 with_jQuery(function($) {
-  var tools = null; // set later to StackExchangeTopbarTools
+  var SETT = null; // set later to StackExchangeTopbarTools
   
   // It's sometimes handy to know what site you're on
   //  Basically, strips leading 'meta.' and trailing anything useless
@@ -78,13 +78,17 @@ with_jQuery(function($) {
   });
   spacingAttr = spacingAttr[sitename in spacingAttr ? sitename : ''];
   
+  // Have to know how wide the topbar starts out as
+  // 980px at the moment, but best to be prepared for change
+  var defaultWidth = $('.topbar *.topbar-wrapper').css('width');
+  
   var linkSetup = {
     id: function(id) {
       if (!id) {
         this.attr('data-sett-id', '');
         return;
       }
-      if (tools.links._all().filter(function() {
+      if (SETT.links._all().filter(function() {
             return $(this).attr('data-sett-id') == id;
           }).length > 0) {
         throw 'StackExchangeTopbarTools.links._add: there already exists a link with ID ' + id + ', you may not add another';
@@ -114,19 +118,19 @@ with_jQuery(function($) {
         // Handled in .click
       }
       if (on.tick) {
-        tools._subscribers.tick._short.push({
+        SETT._subscribers.tick._short.push({
           func: on.tick,
           elem: this
         });
       }
       if (on.floating) {
-        tools._subscribers.floating.push({
+        SETT._subscribers.floating.push({
           func: on.floating,
           elem: this
         });
       }
       if (on.fullWidth) {
-        tools._subscribers.fullWidth.push({
+        SETT._subscribers.fullWidth.push({
           func: on.fullWidth,
           elem: this
         });
@@ -177,7 +181,10 @@ with_jQuery(function($) {
   
   var topbar_fullWidth_data = {
     detect: function() {
-      return $('.topbar *.topbar-wrapper').css('width') === '980px';
+      return $('.topbar *.topbar-wrapper').css('width') === defaultWidth;
+    },
+    once: function() {
+      $('.topbar *.topbar-wrapper').css('min-width', defaultWidth);
     },
     on: $.extend(function() {
       $('.topbar *.topbar-wrapper').css('width', '100%');
@@ -185,14 +192,14 @@ with_jQuery(function($) {
     }, {
       askubuntu: function() {
         // Not supported for aesthetic reasons
-        tools.topbar.fullWidth(false);
+        SETT.topbar.fullWidth(false);
         throw {sett: {abortStyleToggle: true}};
       },
     }),
-    off: $.extend(function() {
-      $('.topbar *.topbar-wrapper').css('width', '980px');
+    off: function() {
+      $('.topbar *.topbar-wrapper').css('width', defaultWidth);
       $('.topbar *.search-container *:last-child').css('margin-right', 0);
-    }, {})
+    }
   };
   
   // ----------------------------------------------------------------------------------------------
@@ -215,8 +222,8 @@ with_jQuery(function($) {
     
     topbar: {
       floating: function toggleTopbarFloating(toggle) {
-        var success = tools.topbar._styleToggle.call(topbar_floating_data, toggle);
-        $.each(tools._subscribers.floating, function() {
+        var success = SETT.topbar._styleToggle.call(topbar_floating_data, toggle);
+        $.each(SETT._subscribers.floating, function() {
           if (!(this.elem.isAttached())) return true; // element not attached to DOM; do nothing
           this.func.call({elem: this.elem, object: this.elem.data('sett-modify-methods')}, success);
         });
@@ -224,8 +231,8 @@ with_jQuery(function($) {
       },
       
       fullWidth: function toggleTopbarFullWidth(toggle) {
-        var success = tools.topbar._styleToggle.call(topbar_fullWidth_data, toggle);
-        $.each(tools._subscribers.fullWidth, function() {
+        var success = SETT.topbar._styleToggle.call(topbar_fullWidth_data, toggle);
+        $.each(SETT._subscribers.fullWidth, function() {
           if (!(this.elem.isAttached())) return true; // element not attached to DOM; do nothing
           this.func.call({elem: this.elem, object: this.elem.data('sett-modify-methods')}, success);
         });
@@ -272,14 +279,14 @@ with_jQuery(function($) {
         return container ? x : x.find('a');
       },
       _All: function() {
-        return tools.links._all().add('.topbar-flair span');
+        return SETT.links._all().add('.topbar-flair span');
       },
       
       append: function appendLink() {
-        tools.links._add.apply({prepend: false}, arguments);
+        SETT.links._add.apply({prepend: false}, arguments);
       },
       prepend: function prependLink() {
-        tools.links._add.apply({prepend: true}, arguments);
+        SETT.links._add.apply({prepend: true}, arguments);
       },
       _add: function() {
         var _ = this;
@@ -319,19 +326,19 @@ with_jQuery(function($) {
           
           if (data.unreadColor) linkSetup.unread.call(elem, data.unreadColor);
           
-          if (tools.links._defaults.color) {
-            elem.css('color', tools.links._defaults.color);
+          if (SETT.links._defaults.color) {
+            elem.css('color', SETT.links._defaults.color);
           }
           
           elem.data('sett-modify-methods', modifyMethods);
           
-          elem[_.prepend ? 'prependTo' : 'appendTo'](tools.links._all(true));
+          elem[_.prepend ? 'prependTo' : 'appendTo'](SETT.links._all(true));
         }); // $.each(arguments, ...)
       }, // links._add
       
       color: function changeLinksColor(color) {
-        tools.links._All.css('color', color);
-        tools.links._defaults.color = color;
+        SETT.links._All.css('color', color);
+        SETT.links._defaults.color = color;
       },
     }), // links
     
@@ -343,7 +350,7 @@ with_jQuery(function($) {
         initFuncs = StackExchangeTopbarToolsPluginInit;
       }
       while (initFuncs.length) {
-        initFuncs.shift()(tools);
+        initFuncs.shift()(SETT);
       }
     },
   };
@@ -357,7 +364,7 @@ with_jQuery(function($) {
   setInterval(function() {
     // The `* 1000` is to correct for `.getTime()` being in milliseconds and the offset in seconds
     var t = new Date().getTime() + StackExchange.options.serverTimeOffsetSec * 1000;
-    $.each(tools._subscribers.tick._short, function() {
+    $.each(SETT._subscribers.tick._short, function() {
       if (!(this.elem.isAttached())) return true; // element not attached to DOM; do nothing
       this.func.call({elem: this.elem, object: this.elem.data('sett-modify-methods')}, new Date(t));
     });
@@ -371,5 +378,5 @@ with_jQuery(function($) {
     $('#custom-header').css('margin-bottom', 0);
   }
   
-  (tools = window.StackExchangeTopbarTools).pluginsReady();
+  (SETT = window.StackExchangeTopbarTools).pluginsReady();
 });
