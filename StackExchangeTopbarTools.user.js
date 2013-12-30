@@ -363,17 +363,30 @@ with_jQuery(function($) {
       }
     },
   };
+  SETT = window.StackExchangeTopbarTools;
   
-  // Corral the built-in links
-  $('.topbar *.topbar-menu-links > a').each(function() {
-    var elem = $(this), text = $(this).text().trim();
-    elem.attr('data-sett-id', text);
-    if (text === 'help') return; // Dropdowns will be dealt with later
-    elem.text(text)
-      .data('sett-modify-methods', linkSetup.modifyMethods.call(elem));
-  })
-    // And just help out a bit here
-    .filter('[data-sett-id=help]').attr('href', '/help');
+  // Corral and configure the built-in links
+  (function(links) {
+    links.each(function() {
+      var elem = $(this), text = $(this).text().trim();
+      elem.attr('data-sett-id', text);
+      if (text === 'help')
+        return true; // Dropdowns will be dealt with later
+      elem.text(text)
+        .data('sett-modify-methods', linkSetup.modifyMethods.call(elem));
+    });
+    
+    links.filter('[data-sett-id=help]').attr('href', '/help');
+    
+    $.each({'review': '#E519E5', 'tools': '#F27F0C'}, function(id, color) {
+      var link = SETT.links(id);
+      if (!link) return true;
+      link.unread(0);
+      links.filter(function() {
+        return $(this).attr('data-sett-id') === id;
+      }).children('.unread-count').css('background-color', color);
+    });
+  })($('.topbar *.topbar-menu-links > a'));
   
   // Set up ticks
   setInterval(function() {
@@ -393,5 +406,5 @@ with_jQuery(function($) {
     $('#custom-header').css('margin-bottom', 0);
   }
   
-  (SETT = window.StackExchangeTopbarTools).pluginsReady();
+  SETT.pluginsReady();
 });
