@@ -94,7 +94,7 @@ Use `links.prepend` instead of `links.append` to add the link at the start inste
 ### Link object methods
 
 <pre>
-<i>SETT</i>.links(<i>link ID</i>).<i>modify</i>(<i>...</i>)<i>.[...]</i>;
+<i>SETT</i>.links(<i>link ID</i>).<i>[...]</i>;
 </pre>
 
 The link ID is the same one that was used as the `.id` option when the link was added.

@@ -47,16 +47,18 @@ with_jQuery(function($) {
   // Make the damn bubbles work right
   // CSS copypasta'd from Firebug on $SE_PAGE
   var bubble_css
-    = '.topbar .unread-count {\n'
+    = '.topbar *.unread-count {\n'
     + '  border-radius: 2px;\n'
     + '  color: #FFF;\n'
     + '  display: inline-block;\n'
     + "  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;\n"
     + '  font-size: 11px;\n'
     + '  line-height: 1;\n'
-    + '  margin-left: 4px;\n'
     + '  padding: 1px 6px;\n'
     + '  text-indent: 0;\n'
+    + '}\n'
+    + '.topbar *.topbar-menu-links *.unread-count {\n'
+    + '  margin-left: 4px;\n'
     + '}\n'
     ;
   $('<style type="text/css">').text(bubble_css).appendTo(document.head);
@@ -82,6 +84,8 @@ with_jQuery(function($) {
   // 980px at the moment, but best to be prepared for change
   var defaultWidth = $('.topbar *.topbar-wrapper').css('width');
   
+  // Code for doing stuff with links, split out for reusability
+  //  and readability and stuff
   var linkSetup = {
     id: function(id) {
       if (!id) {
@@ -141,12 +145,41 @@ with_jQuery(function($) {
       $('<span class="unread-count">')
         .css({backgroundColor: color, display: 'none'})
         .appendTo(this);
+    },
+    
+    modifyMethods: function() {
+      var elem = this;
+      return {
+        text: function(text) { elem.text(text); return this; },
+        remove: function()   { elem.remove();   return this; },
+        pulse: function(success) {
+          var color = success ? 'green' : 'red';
+          if (typeof success === 'undefined') color = 'cyan';
+          elem.css({transition: 'background-color 150ms linear', backgroundColor: color});
+          setTimeout(function() {
+            elem.css({transition: '', backgroundColor: ''});
+          }, 150);
+          return this;
+        },
+        unread: function(count) {
+          var bubble = $('.unread-count', elem);
+          if (!bubble.length) {
+            linkSetup.unread.call(elem, 'red');
+            bubble = $('.unread-count', elem);
+          }
+          bubble.css('display', count ? 'inline' : 'none')
+                .text(count);
+          return this;
+        }
+      };
     }
   };
   
   // Floating is tricky to get right; this is what does it
   var topbar_floating_data = {
-    detect: function() { return $('.topbar').css('position') !== 'fixed'; },
+    detect: function() {
+      return $('.topbar').css('position') !== 'fixed';
+    },
     once: $.extend(function() {
       $('.topbar').css({zIndex: 999, top: 0});
     }, {
@@ -299,37 +332,13 @@ with_jQuery(function($) {
           linkSetup.id.call(elem, data.id);
           linkSetup.click.call(elem, data.href, data.on);
           if (data.on) linkSetup.on.call(elem, data.on);
-          
-          var modifyMethods = {
-            text: function(text) { elem.text(text); return this; },
-            remove: function()   { elem.remove();   return this; },
-            pulse: function(success) {
-              var color = success ? 'green' : 'red';
-              if (typeof success === 'undefined') color = 'blue';
-              elem.css({transition: 'background-color 150ms linear', backgroundColor: color});
-              setTimeout(function() {
-                elem.css('background-color', '');
-              }, 150);
-              return this;
-            },
-            unread: function(count) {
-              var bubble = $('.unread-count', elem);
-              if (!bubble.length) {
-                linkSetup.unread.call(elem, 'red');
-                bubble = $('.unread-count', elem);
-              }
-              bubble.css('display', count ? 'inline' : 'none')
-                    .text(count);
-              return this;
-            }
-          };
-          
           if (data.unreadColor) linkSetup.unread.call(elem, data.unreadColor);
           
           if (SETT.links._defaults.color) {
             elem.css('color', SETT.links._defaults.color);
           }
           
+          var modifyMethods = linkSetup.modifyMethods.call(elem);
           elem.data('sett-modify-methods', modifyMethods);
           
           elem[_.prepend ? 'prependTo' : 'appendTo'](SETT.links._all(true));
@@ -357,8 +366,14 @@ with_jQuery(function($) {
   
   // Corral the built-in links
   $('.topbar *.topbar-menu-links > a').each(function() {
-    $(this).attr('data-sett-id', $(this).text().trim());
-  });
+    var elem = $(this), text = $(this).text().trim();
+    elem.attr('data-sett-id', text);
+    if (text === 'help') return; // Dropdowns will be dealt with later
+    elem.text(text)
+      .data('sett-modify-methods', linkSetup.modifyMethods.call(elem));
+  })
+    // And just help out a bit here
+    .filter('[data-sett-id=help]').attr('href', '/help');
   
   // Set up ticks
   setInterval(function() {
