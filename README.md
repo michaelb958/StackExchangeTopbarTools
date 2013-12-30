@@ -1,4 +1,4 @@
-# Stack Exchange Topbar Tools 0.1
+# Stack Exchange Topbar Tools 0.2
 
 *(aka SETT)*
 
