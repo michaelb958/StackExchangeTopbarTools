@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name Stack Exchange Topbar Tools
 // @description A library to support all sorts of tweaks, options, and widgets for the new black topbar.
-// @version 0.2-dev
+// @version 0.2
 // @namespace michaelb958
 // @author michaelb958
 // @license MIT (http://opensource.org/licenses/MIT)
@@ -168,7 +168,7 @@ with_jQuery(function($) {
             bubble = $('.unread-count', elem);
           }
           bubble.css('display', count ? 'inline' : 'none')
-                .text(count);
+                .text(count.toString());
           return this;
         }
       };

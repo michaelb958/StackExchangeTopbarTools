@@ -119,6 +119,14 @@ Call this method on your link to indicate the success (pass `true`) or failure (
 <i>link</i>.remove();
 </pre>
 
+#### Change unread counter-bubble
+
+<pre>
+<i>link</i>.unread(<i>count</i>);
+</pre>
+
+A falsy value (like `0` or `null`) will cause the bubble to be hidden. Any other value will show the bubble containing that text; it will stay shown until hidden again.
+
 ### Changing link color globally
 
 <pre>
@@ -126,3 +134,12 @@ Call this method on your link to indicate the success (pass `true`) or failure (
 </pre>
 
 Supply a string containing any color accepted by CSS (for example, `'#26D8D8'`).
+
+### RHS links supplied by SE
+
+All of the following can be referred to by an ID equivalent to their names.
+
+* `help` *dropdown (when logged in)*  
+    You can't really do much with this, though. Dropdown support isn't yet implemented.
+* `review`  
+* `tools`  
