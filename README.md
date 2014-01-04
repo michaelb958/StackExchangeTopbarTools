@@ -33,6 +33,18 @@ with_jQuery(function($) {
 });
 </pre>
 
+Userscript plugins are advised to use the following `@include`s:
+
+    // @include http://*stackexchange.com/*
+    // @include http://*stackoverflow.com/*
+    // @include http://*serverfault.com/*
+    // @include http://*superuser.com/*
+    // @include http://*stackapps.com/*
+    // @include http://*askubuntu.com/*
+    // @include http://*mathoverflow.net/*
+
+Don't worry that these are overly inclusive; the master SETT script is more selective about where it is run, and the plugins won't do anything without it.
+
 ## Attributes of the bar itself
 
 ### Background color
