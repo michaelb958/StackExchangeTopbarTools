@@ -5,13 +5,8 @@
 // @namespace michaelb958
 // @author michaelb958
 // @license MIT (http://opensource.org/licenses/MIT)
-// @include http://*.stackexchange.com/*
-// @include http://*stackoverflow.com/*
-// @include http://*serverfault.com/*
-// @include http://*superuser.com/*
-// @include http://*stackapps.com/*
-// @include http://*askubuntu.com/*
-// @include http://*mathoverflow.net/*
+// @include /^https?:\/\/.*(?:(?:stack(?:apps|exchange|overflow)|superuser|serverfault|askubuntu)\.com|mathoverflow\.net)\/.*/
+// @exclude https://stackexchange.com/*
 // @exclude http://area51.stackexchange.com/*
 // @exclude http://chat.*/*
 // @exclude http://blog.*/*
