@@ -5,11 +5,8 @@
 // @namespace michaelb958
 // @author michaelb958
 // @license MIT (http://opensource.org/licenses/MIT)
-// @include /^https?:\/\/.*(?:(?:stack(?:apps|exchange|overflow)|superuser|serverfault|askubuntu)\.com|mathoverflow\.net)\/.*/
-// @exclude https://stackexchange.com/*
-// @exclude http://area51.stackexchange.com/*
-// @exclude http://chat.*/*
-// @exclude http://blog.*/*
+// @include /^https?:\/\/(.*\.)?(?:(?:stack(?:apps|exchange|overflow)|superuser|serverfault|askubuntu)\.com|mathoverflow\.net)\/.*/
+// @exclude /^https?:\/\/(?:(?:area51|chat|blog|api)\.)?stackexchange\.com\/.*/
 // ==/UserScript==
 
 function with_jQuery(f) {
