@@ -220,6 +220,22 @@ with_jQuery(function($) {
     }
   };
   
+  // This code was getting duplicated everywhere
+  var doSubscribers = function(subs, argsFunc) {
+    // Note on argsFunc: The function wrapper around the array is
+    //  necessary so that said array is regenerated fresh for each
+    //  application, so as to prevent malicious plugins modifying stuff
+    //  within it - for example, tick subscribers get a Date, which
+    //  could be modified.  (Also, arrow functions are sorely needed
+    //  here - writing `function(){return [foo, bar];}` is a pain
+    //  compared to `() => [foo, bar]`.  They're not widely available
+    //  yet, unfortunately.)
+    $.each(subs, function() {
+      if (!(this.elem.isAttached())) return true; // element not attached to DOM; do nothing
+      this.func.apply({elem: this.elem, object: this.elem.data('sett-modify-methods')}, argsFunc());
+    });
+  };
+  
   // ----------------------------------------------------------------------------------------------
   
   $.fn.isAttached = function() {
@@ -241,19 +257,13 @@ with_jQuery(function($) {
     topbar: {
       floating: function toggleTopbarFloating(toggle) {
         var success = SETT.topbar._styleToggle.call(topbar_floating_data, toggle);
-        $.each(SETT._subscribers.floating, function() {
-          if (!(this.elem.isAttached())) return true; // element not attached to DOM; do nothing
-          this.func.call({elem: this.elem, object: this.elem.data('sett-modify-methods')}, success);
-        });
+        doSubscribers(SETT._subscribers.floating, function(){return [success];});
         return success;
       },
       
       fullWidth: function toggleTopbarFullWidth(toggle) {
         var success = SETT.topbar._styleToggle.call(topbar_fullWidth_data, toggle);
-        $.each(SETT._subscribers.fullWidth, function() {
-          if (!(this.elem.isAttached())) return true; // element not attached to DOM; do nothing
-          this.func.call({elem: this.elem, object: this.elem.data('sett-modify-methods')}, success);
-        });
+        doSubscribers(SETT._subscribers.fullWidth, function(){return [success];});
         return success;
       },
       
@@ -377,10 +387,7 @@ with_jQuery(function($) {
   setInterval(function() {
     // The `* 1000` is to correct for `.getTime()` being in milliseconds and the offset in seconds
     var t = new Date().getTime() + StackExchange.options.serverTimeOffsetSec * 1000;
-    $.each(SETT._subscribers.tick._short, function() {
-      if (!(this.elem.isAttached())) return true; // element not attached to DOM; do nothing
-      this.func.call({elem: this.elem, object: this.elem.data('sett-modify-methods')}, new Date(t));
-    });
+    doSubscribers(SETT._subscribers.tick._short, function(){return [new Date(t)];});
   }, 1000);
   
   $('.topbar *.network-items *.topbar-icon').removeAttr('href');
