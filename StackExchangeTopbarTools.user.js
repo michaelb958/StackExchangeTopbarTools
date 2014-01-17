@@ -6,7 +6,8 @@
 // @author michaelb958
 // @license MIT (http://opensource.org/licenses/MIT)
 // @include /^https?:\/\/(.*\.)?(?:(?:stack(?:apps|exchange|overflow)|superuser|serverfault|askubuntu)\.com|mathoverflow\.net)\/.*/
-// @exclude /^https?:\/\/(?:(?:area51|chat|blog|api)\.)?stackexchange\.com\/.*/
+// @exclude /^https?:\/\/(?:(?:api|area51)\.)?stackexchange\.com\/.*/
+// @exclude /^https?:\/\/(?:chat|blog)\..+/
 // ==/UserScript==
 
 function with_jQuery(f) {
