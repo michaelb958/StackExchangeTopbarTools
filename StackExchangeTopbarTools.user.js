@@ -184,6 +184,7 @@ with_jQuery(function($) {
         $('#custom-header').css('position', 'fixed');
         $('.topbar').css('margin-left', '-495px');
         $('.container').css(spacingAttr, '64px');
+        $('#custom-header *.nav-global ul > li ul').css('top', '64px');
       },
     }),
     off: $.extend(function() {
@@ -193,6 +194,7 @@ with_jQuery(function($) {
       askubuntu: function() {
         $('#custom-header').css('position', 'static');
         $('.topbar').css('margin-left', 'auto');
+        $('#custom-header *.nav-global ul > li ul').css('top', '30px');
       },
     })
   };
