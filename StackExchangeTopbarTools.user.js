@@ -319,7 +319,7 @@ with_jQuery(function($) {
         SETT.links._add.apply({prepend: true}, arguments);
       },
       _add: function() {
-        var _ = this;
+        var elems = $();
         $.each(arguments, function(idx, data) {
           if (!data) return true;
           var elem = $('<a />');
@@ -338,8 +338,13 @@ with_jQuery(function($) {
           var modifyMethods = linkSetup.modifyMethods.call(elem);
           elem.data('sett-modify-methods', modifyMethods);
           
-          elem[_.prepend ? 'prependTo' : 'appendTo'](SETT.links._all(true));
+          // Do not remove this assignment to `elems`.  The code will
+          //  break, and you will regret it.  ($().add() doesn't modify
+          //  the existing jQuery object - it creates a new one.)
+          elems = elems.add(elem);
         }); // $.each(arguments, ...)
+        var action = this.prepend ? 'prependTo' : 'appendTo';
+        elems[action](SETT.links._all(true));
       }, // links._add
       
       color: function changeLinksColor(color) {

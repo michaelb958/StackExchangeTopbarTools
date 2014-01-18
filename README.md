@@ -35,7 +35,7 @@ with_jQuery(function($) {
 
 Userscript plugins are advised to use *only* the following `@include`:
 
-    // @include /^https?:\/\/.*(?:(?:stack(?:apps|exchange|overflow)|superuser|serverfault|askubuntu)\.com|mathoverflow\.net)\/.*/
+    // @include /^https?:\/\/(.*\.)?(?:(?:stack(?:apps|exchange|overflow)|superuser|serverfault|askubuntu)\.com|mathoverflow\.net)\/.*/
 
 Don't worry that this seems overly inclusive; the master SETT script is more selective about where it is run, and the plugins won't do anything without it.
 

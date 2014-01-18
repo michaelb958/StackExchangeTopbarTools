@@ -21,16 +21,16 @@ with_jQuery(function($) {
    || []).push(function(SETT) {
     
     var meta = /^meta\./.test(location.host);
-    SETT.links.prepend({
-      id: 'chat-link',
-      text: 'chat',
-      href: 'http://chat.' + (/stackoverflow\.com$/.test(location.host)
-                              ? location.host : 'stackexchange.com'),
-    }, location.host === 'stackapps.com' ? null : {
+    SETT.links.prepend(location.host === 'stackapps.com' ? null : {
       id: 'main-meta-link',
       text: meta ? 'main' : 'meta',
       href: 'http://' + (meta ? location.hostname.substring(5)
                               : 'meta.' + location.hostname),
+    }, {
+      id: 'chat-link',
+      text: 'chat',
+      href: 'http://chat.' + (/stackoverflow\.com$/.test(location.host)
+                              ? location.host : 'stackexchange.com'),
     });
     
   });
