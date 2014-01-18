@@ -20,17 +20,20 @@ with_jQuery(function($) {
    = window.StackExchangeTopbarToolsPluginInit
    || []).push(function(SETT) {
     
-    var meta = /^meta\./.test(location.host);
+    var a51 = /^(discuss\.)?area51/.test(location.host),
+        meta = /^(?:discuss|meta)\./.test(location.host);
+    var mainMetaHost = meta
+                     ? location.hostname.substring(a51 ? 8 : 5)
+                     : (a51 ? 'discuss.' : 'meta.') + location.hostname;
     SETT.links.prepend(location.host === 'stackapps.com' ? null : {
       id: 'main-meta-link',
-      text: meta ? 'main' : 'meta',
-      href: 'http://' + (meta ? location.hostname.substring(5)
-                              : 'meta.' + location.hostname),
+      text: meta ? 'main' : a51 ? 'discuss' : 'meta',
+      href: 'http://' + mainMetaHost
     }, {
       id: 'chat-link',
       text: 'chat',
       href: 'http://chat.' + (/stackoverflow\.com$/.test(location.host)
-                              ? location.host : 'stackexchange.com'),
+                              ? location.host : 'stackexchange.com')
     });
     
   });
