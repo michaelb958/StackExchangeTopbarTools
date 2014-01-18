@@ -80,7 +80,7 @@ True means expand to full width of viewport, false means stay `980px` wide. If o
 }, ...);
 </pre>
 
-Use `links.prepend` instead of `links.append` to add the link at the start instead of the end.
+Use `links.prepend` instead of `links.append` to add the links at the start instead of the end.
 
 * `.id` is the ID of the link, used internally to refer to that link. No two links may share an ID; this is enforced by code.
 * `.text` is the human-readable text of the link.
@@ -92,10 +92,6 @@ Use `links.prepend` instead of `links.append` to add the link at the start inste
     * `.on.floating` and `.on.fullWidth` are executed when the corresponding <code><i>SETT</i>.topbar</code> methods are called. Called with one parameter - the corresponding method's return value.
     
     In all cases, the handler's `this` is set to an object containing the element in question as `elem` and the abstraction object as `object`.
-
-#### WARNING: Prepending links
-
-`links.prepend` behaves kinda counterintuitively when passed multiple arguments - when all's said and done, the extra links appear in reverse order (that is, the last argument to `links.prepend` becomes the first link on the RHS).
 
 ### Link object methods
 
