@@ -77,7 +77,7 @@ with_jQuery(function($) {
         this.attr('data-sett-id', '');
         return;
       }
-      if (SETT.links._all().filter(function() {
+      if (allLinks().filter(function() {
             return $(this).attr('data-sett-id') == id;
           }).length > 0) {
         throw 'StackExchangeTopbarTools.links._add: there already exists a link with ID ' + id + ', you may not add another';
@@ -107,19 +107,19 @@ with_jQuery(function($) {
         // Handled in .click
       }
       if (on.tick) {
-        SETT._subscribers.tick._short.push({
+        subscribers.tick._short.push({
           func: on.tick,
           elem: this
         });
       }
       if (on.floating) {
-        SETT._subscribers.floating.push({
+        subscribers.floating.push({
           func: on.floating,
           elem: this
         });
       }
       if (on.fullWidth) {
-        SETT._subscribers.fullWidth.push({
+        subscribers.fullWidth.push({
           func: on.fullWidth,
           elem: this
         });
@@ -222,7 +222,13 @@ with_jQuery(function($) {
     }
   };
   
-  // This code was getting duplicated everywhere
+  var subscribers = {
+    tick: {
+      _short: []
+    },
+    floating: [],
+    fullWidth: []
+  };
   var doSubscribers = function(subs, argsFunc) {
     // Note on argsFunc: The function wrapper around the array is
     //  necessary so that said array is regenerated fresh for each
@@ -238,6 +244,64 @@ with_jQuery(function($) {
     });
   };
   
+  var topbarStyleToggle = function(toggle) {
+    var x; // temp var
+    if (typeof toggle === 'undefined') toggle = this.detect();
+    try {
+      if ((x = this.once)) {
+        x();
+        (x = x[sitename in x ? sitename : '']) ? x() : null;
+        this.once = false;
+      }
+      (x = toggle ? this.on : this.off)();
+      (x = x[sitename in x ? sitename : '']) ? x() : null;
+      return true;
+    } catch (e) {
+      if (e.sett && e.sett.abortStyleToggle) {
+        return false;
+      } else throw e;
+    }
+  };
+  
+  var linkDefaults = {
+    color: false
+  }, linksContainer = function() {
+    return $('.topbar-menu-links');
+  }, allLinks = function() {
+    return linksContainer().find('a');
+  }, allLinksPlusUserSpans = function() {
+    return allLinks().add('.topbar-flair span');
+  };
+  
+  var addLinks = function() {
+    var elems = $();
+    $.each(arguments, function(idx, data) {
+      if (!data) return true;
+      var elem = $('<a />');
+      if (data.text)    elem.text(data.text);
+      if (data.tooltip) elem.attr('title', data.tooltip);
+      
+      linkSetup.id.call(elem, data.id);
+      linkSetup.click.call(elem, data.href, data.on);
+      if (data.on) linkSetup.on.call(elem, data.on);
+      if (data.unreadColor) linkSetup.unread.call(elem, data.unreadColor);
+      
+      if (linkDefaults.color) {
+        elem.css('color', linkDefaults.color);
+      }
+      
+      var modifyMethods = linkSetup.modifyMethods.call(elem);
+      elem.data('sett-modify-methods', modifyMethods);
+      
+      // Do not remove this assignment to `elems`.  The code will
+      //  break, and you will regret it.  ($().add() doesn't modify
+      //  the existing jQuery object - it creates a new one.)
+      elems = elems.add(elem);
+    }); // $.each(arguments, ...)
+    var action = this.prepend ? 'prependTo' : 'appendTo';
+    elems[action](linksContainer());
+  };
+  
   // ----------------------------------------------------------------------------------------------
   
   $.fn.isAttached = function() {
@@ -245,47 +309,20 @@ with_jQuery(function($) {
     return $.contains(document.documentElement, this[0]);
   };
   
-  window.StackExchangeTopbarTools = {
-    _subscribers: {
-      tick: {
-        _short: []
-      },
-      floating: [],
-      fullWidth: []
-    },
-    
+  SETT = window.StackExchangeTopbarTools = {
     sitename: sitename,
     
     topbar: {
       floating: function toggleTopbarFloating(toggle) {
-        var success = SETT.topbar._styleToggle.call(topbar_floating_data, toggle);
-        doSubscribers(SETT._subscribers.floating, function(){return [success];});
+        var success = topbarStyleToggle.call(topbar_floating_data, toggle);
+        doSubscribers(subscribers.floating, function(){return [success];});
         return success;
       },
       
       fullWidth: function toggleTopbarFullWidth(toggle) {
-        var success = SETT.topbar._styleToggle.call(topbar_fullWidth_data, toggle);
-        doSubscribers(SETT._subscribers.fullWidth, function(){return [success];});
+        var success = topbarStyleToggle.call(topbar_fullWidth_data, toggle);
+        doSubscribers(subscribers.fullWidth, function(){return [success];});
         return success;
-      },
-      
-      _styleToggle: function(toggle) {
-        var x; // temp var
-        if (typeof toggle === 'undefined') toggle = this.detect();
-        try {
-          if ((x = this.once)) {
-            x();
-            (x = x[sitename in x ? sitename : '']) ? x() : null;
-            this.once = false;
-          }
-          (x = toggle ? this.on : this.off)();
-          (x = x[sitename in x ? sitename : '']) ? x() : null;
-          return true;
-        } catch (e) {
-          if (e.sett && e.sett.abortStyleToggle) {
-            return false;
-          } else throw e;
-        }
       },
       
       color: function changeTopbarColor(color) {
@@ -300,58 +337,18 @@ with_jQuery(function($) {
       if (link.length > 1) throw "StackExchangeTopbarTools.links.call: you somehow have two links with the same ID, go fix it!";
       return link.data('sett-modify-methods');
     }, {
-      _defaults: {
-        color: false,
-      },
-      
-      _all: function(container) {
-        var x = $('.topbar-menu-links');
-        return container ? x : x.find('a');
-      },
-      _All: function() {
-        return SETT.links._all().add('.topbar-flair span');
-      },
-      
       append: function appendLink() {
-        SETT.links._add.apply({prepend: false}, arguments);
+        addLinks.apply({prepend: false}, arguments);
       },
       prepend: function prependLink() {
-        SETT.links._add.apply({prepend: true}, arguments);
+        addLinks.apply({prepend: true}, arguments);
       },
-      _add: function() {
-        var elems = $();
-        $.each(arguments, function(idx, data) {
-          if (!data) return true;
-          var elem = $('<a />');
-          if (data.text)    elem.text(data.text);
-          if (data.tooltip) elem.attr('title', data.tooltip);
-          
-          linkSetup.id.call(elem, data.id);
-          linkSetup.click.call(elem, data.href, data.on);
-          if (data.on) linkSetup.on.call(elem, data.on);
-          if (data.unreadColor) linkSetup.unread.call(elem, data.unreadColor);
-          
-          if (SETT.links._defaults.color) {
-            elem.css('color', SETT.links._defaults.color);
-          }
-          
-          var modifyMethods = linkSetup.modifyMethods.call(elem);
-          elem.data('sett-modify-methods', modifyMethods);
-          
-          // Do not remove this assignment to `elems`.  The code will
-          //  break, and you will regret it.  ($().add() doesn't modify
-          //  the existing jQuery object - it creates a new one.)
-          elems = elems.add(elem);
-        }); // $.each(arguments, ...)
-        var action = this.prepend ? 'prependTo' : 'appendTo';
-        elems[action](SETT.links._all(true));
-      }, // links._add
       
       color: function changeLinksColor(color) {
-        SETT.links._All.css('color', color);
-        SETT.links._defaults.color = color;
+        allLinksPlusUserSpans().css('color', color);
+        linkDefaults.color = color;
       },
-    }), // links
+    }),
     
     pluginsReady: function pluginsReady() {
       var initFuncs = [];
@@ -365,7 +362,6 @@ with_jQuery(function($) {
       }
     },
   };
-  SETT = window.StackExchangeTopbarTools;
   
   // Corral and configure the built-in links
   (function(links) {
@@ -394,7 +390,7 @@ with_jQuery(function($) {
   setInterval(function() {
     // The `* 1000` is to correct for `.getTime()` being in milliseconds and the offset in seconds
     var t = new Date().getTime() + StackExchange.options.serverTimeOffsetSec * 1000;
-    doSubscribers(SETT._subscribers.tick._short, function(){return [new Date(t)];});
+    doSubscribers(subscribers.tick._short, function(){return [new Date(t)];});
   }, 1000);
   
   $('.topbar *.network-items *.topbar-icon').removeAttr('href');
