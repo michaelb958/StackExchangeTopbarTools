@@ -69,6 +69,34 @@ with_jQuery(function($) {
   // 980px at the moment, but best to be prepared for change
   var defaultWidth = $('.topbar *.topbar-wrapper').css('width');
   
+  function TopbarLink(elem) {
+    this.text = function setText(text) {
+      elem.text(text); return this;
+    };
+    this.remove = function removeLink() {
+      elem.remove(); return this;
+    };
+    this.pulse = function pulseLink(success) {
+      var color = success ? 'green' : 'red';
+      if (typeof success === 'undefined') color = 'cyan';
+      elem.css({transition: 'background-color 150ms linear', backgroundColor: color});
+      setTimeout(function() {
+        elem.css({transition: '', backgroundColor: ''});
+      }, 150);
+      return this;
+    };
+    this.unread = function setUnreadCounter(count) {
+      var bubble = $('.unread-count', elem);
+      if (!bubble.length) {
+        linkSetup.unread.call(elem, 'red');
+        bubble = $('.unread-count', elem);
+      }
+      bubble.css('display', count ? 'inline' : 'none')
+            .text(count.toString());
+      return this;
+    };
+  };
+  
   // Code for doing stuff with links, split out for reusability
   //  and readability and stuff
   var linkSetup = {
@@ -133,30 +161,7 @@ with_jQuery(function($) {
     },
     
     modifyMethods: function() {
-      var elem = this;
-      return {
-        text: function(text) { elem.text(text); return this; },
-        remove: function()   { elem.remove();   return this; },
-        pulse: function(success) {
-          var color = success ? 'green' : 'red';
-          if (typeof success === 'undefined') color = 'cyan';
-          elem.css({transition: 'background-color 150ms linear', backgroundColor: color});
-          setTimeout(function() {
-            elem.css({transition: '', backgroundColor: ''});
-          }, 150);
-          return this;
-        },
-        unread: function(count) {
-          var bubble = $('.unread-count', elem);
-          if (!bubble.length) {
-            linkSetup.unread.call(elem, 'red');
-            bubble = $('.unread-count', elem);
-          }
-          bubble.css('display', count ? 'inline' : 'none')
-                .text(count.toString());
-          return this;
-        }
-      };
+      return new TopbarLink(this);
     }
   };
   
@@ -309,48 +314,50 @@ with_jQuery(function($) {
     return $.contains(document.documentElement, this[0]);
   };
   
-  SETT = window.StackExchangeTopbarTools = {
-    sitename: sitename,
+  SETT = window.StackExchangeTopbarTools
+       = new function StackExchangeTopbarTools() {
+    this.sitename = sitename;
     
-    topbar: {
-      floating: function toggleTopbarFloating(toggle) {
+    this.topbar = new function Topbar() {
+      this.floating = function toggleTopbarFloating(toggle) {
         var success = topbarStyleToggle.call(topbar_floating_data, toggle);
         doSubscribers(subscribers.floating, function(){return [success];});
         return success;
-      },
+      };
       
-      fullWidth: function toggleTopbarFullWidth(toggle) {
+      this.fullWidth = function toggleTopbarFullWidth(toggle) {
         var success = topbarStyleToggle.call(topbar_fullWidth_data, toggle);
         doSubscribers(subscribers.fullWidth, function(){return [success];});
         return success;
-      },
+      };
       
-      color: function changeTopbarColor(color) {
+      this.color = function changeTopbarColor(color) {
         $('.topbar').css('background-color', color);
-      },
-    }, // topbar
+      };
+    };
     
-    links: $.extend(function getLinkById(id) {
+    this.links = function getLinkById(id) {
       var link = $('.topbar-menu-links > a[data-sett-id]').filter(function() {
         return $(this).attr('data-sett-id') == id;
       });
       if (link.length > 1) throw "StackExchangeTopbarTools.links.call: you somehow have two links with the same ID, go fix it!";
       return link.data('sett-modify-methods');
-    }, {
-      append: function appendLink() {
-        addLinks.apply({prepend: false}, arguments);
-      },
-      prepend: function prependLink() {
-        addLinks.apply({prepend: true}, arguments);
-      },
-      
-      color: function changeLinksColor(color) {
-        allLinksPlusUserSpans().css('color', color);
-        linkDefaults.color = color;
-      },
-    }),
+    };
     
-    pluginsReady: function pluginsReady() {
+    this.links.append = function appendLinks() {
+      addLinks.apply({prepend: false}, arguments);
+    };
+    
+    this.links.prepend = function prependLinks() {
+      addLinks.apply({prepend: true}, arguments);
+    };
+    
+    this.links.color = function changeLinksColor(color) {
+      allLinksPlusUserSpans().css('color', color);
+      linkDefaults.color = color;
+    };
+    
+    this.pluginsReady = function pluginsReady() {
       var initFuncs = [];
       if (arguments.length) {
         initFuncs = initFuncs.slice.call(arguments);
@@ -360,7 +367,7 @@ with_jQuery(function($) {
       while (initFuncs.length) {
         initFuncs.shift()(SETT);
       }
-    },
+    };
   };
   
   // Corral and configure the built-in links
