@@ -1,4 +1,4 @@
-# Stack Exchange Topbar Tools 0.2
+# Stack Exchange Topbar Tools 0.2.1
 
 *(aka SETT)*
 
@@ -115,12 +115,6 @@ The link ID is the same one that was used as the `.id` option when the link was 
 
 Call this method on your link to indicate the success (pass `true`) or failure (pass `false`) of whatever it was meant to be doing, or just to notify something (no argument). Close to useless on links without any `.on` handlers.
 
-#### Remove
-
-<pre>
-<i>link</i>.remove();
-</pre>
-
 #### Change unread counter-bubble
 
 <pre>
@@ -128,6 +122,12 @@ Call this method on your link to indicate the success (pass `true`) or failure (
 </pre>
 
 A falsy value (like `0` or `null`) will cause the bubble to be hidden. Any other value will show the bubble containing that text; it will stay shown until hidden again.
+
+#### Remove
+
+<pre>
+<i>link</i>.remove();
+</pre>
 
 ### Changing link color globally
 
